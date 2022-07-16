@@ -1,26 +1,33 @@
+import React, { useState, useEffect } from "react";
+import { TodoForm } from "../components/TodoForm";
+import { TodoList } from "../components/TodoList";
+
+const LOCAL_STORAGE_KEY = "react-toDo-List";
 export const Home = () => {
+    const [todos, setTodos] = useState([]);
+
+    useEffect(() => {
+        const savedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+            if (savedTodos){
+                setTodos(savedTodos);
+            }
+        }, [])
+
+    useEffect(() => {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
+            }, [todos])
+    const addTodo = (todo) => {
+        setTodos([todo, ...todos]);
+    }
+
+    function removeTodo (id){
+        setTodos(todos.filter(todo => todo.id !== id))
+    }
     return (
+        
         <>
-            <div className="container-fluid main">
-                <div className="mainbox">
-                    <div className="row ">
-                        <div className="box1">
-                            <h1>TO DO LIST</h1>
-                        </div>
-                    </div>
-                </div>
-                <div className="mainbox">
-                    <div className="row todo">
-                        <div className="box2">
-                            <div className="d-flex">
-                            <input type="text" placeholder="What are you planning today?"/>
-                            <button class="Add" role="button">Add</button>
-                            </div>
-                                                        
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <TodoForm addTodo={addTodo}/>
+        <TodoList todos={todos}  removeTodo={removeTodo} />
         </>
     )
 }
